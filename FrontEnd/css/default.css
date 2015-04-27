@@ -1,0 +1,12 @@
+﻿canvas {
+    cursor: crosshair;
+    border: 2px solid #bbb;
+    background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA8AAAARCAMAAAA11AaTAAAAD1BMVEUAAADp6enp6enp6en///8uyUgXAAAAA3RSTlMAVamSsHaDAAAAFklEQVQY02NgZmZAAUxMqHxGRoaRBAANPgANgJAOfgAAAABJRU5ErkJggg==);
+}
+
+#chatContainer {
+    height: 365px;
+    border: 2px solid #bbb;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
