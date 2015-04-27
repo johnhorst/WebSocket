@@ -74,7 +74,12 @@ namespace WebSocket.Network
                 Array.Resize(ref header, 14);
                 Read(ref header, 6, 14);
                 dataSize += (int)BitConverter.ToInt64(header, 2);
-            }           
+            }
+           
+            byte[] mask = new byte[4];
+            Array.Copy(header, i, mask, 0, 4);
+           
+            base.Read(out buffer, dataSize);
 
             switch (opCode)
             {
@@ -87,22 +92,17 @@ namespace WebSocket.Network
                 case OpCodeType.CONNECTION_CLOSE:
                     Close();
                     buffer = null;
-                    return 0;                    
+                    return 0;
                 case OpCodeType.PING:
                     Write(null, OpCodeType.PONG);
-                    break;
+                    return 0;
                 case OpCodeType.PONG:
                     break;
                 default:
                     break;
             }
 
-            byte[] mask = new byte[4];
-            Array.Copy(header, i, mask, 0, 4);
-           
-            base.Read(out buffer, dataSize);
-
-            if(buffer!=null)
+            if (buffer!=null)
             {
                 for (i = 0; i < buffer.Length; i++)
                     buffer[i] = (byte)(buffer[i] ^ mask[i % 4]);

@@ -1,5 +1,22 @@
 ﻿$(document).ready(function () {
 
+    $('#changeColor').change(function () {
+        console.log($(this));
+        _canvas.color($(this).val());
+    });
+
+    console.log($('#changeColor'));
+
+    $('.sizePen').click(function () {
+        var newSize = parseInt($(this).children('b').text());
+        $('#currentSize').text(newSize)
+        _canvas.lineWidth(newSize);
+    });
+
+    $('#clearScreen').click(function () {
+        _canvas.clearScreen();
+    });
+
     $('#user').click(function () {
         var name = prompt('Please enter your name', user);
         if (name != null && name.length > 0) {
@@ -22,7 +39,7 @@
     _ws.drawFunction(_canvas.draw);
     _ws.connect();
 
-    
+
 
     function WS(status, btn) {
         var connected = false;
@@ -161,11 +178,17 @@
         var ctx = canvas.getContext("2d");
         var drawing = false;
         var wsFunction = undefined;
+        var color = '#000000';
+        var lineWidth = 5;
 
         $(window).mousedown(function (e) {
+            ctx.lineWidth = lineWidth;
+            ctx.strokeStyle = color;
             drawing = true;
             var obj = getPosition(e);
             obj.Type = "start";
+            obj.Color = color;
+            obj.LineWidth = lineWidth;
             wsFunction("draw", obj);
             draw(obj);
         });
@@ -185,7 +208,7 @@
 
         var getPosition = function (e) {
             if (e.offsetX === undefined || e.offsetY === undefined)
-                return { X: e.pageX - canvas.offsetLeft, Y: e.pageY - canvas.offsetTop }
+                return { X: e.originalEvent.layerX, Y: e.originalEvent.layerY };
             return { X: e.offsetX, Y: e.offsetY };
         }
 
@@ -194,6 +217,8 @@
                 case "start":
                     ctx.beginPath();
                     ctx.moveTo(obj.X, obj.Y);
+                    ctx.strokeStyle = obj.Color;
+                    ctx.lineWidth = obj.LineWidth;
                     break;
                 case "move":
                     ctx.lineTo(obj.X, obj.Y);
@@ -210,5 +235,17 @@
         this.WSFunction = function (e) {
             wsFunction = e;
         };
+
+        this.color = function (c) {
+            color = c;
+        }
+
+        this.lineWidth = function (size) {
+            lineWidth = size;
+        }
+
+        this.clearScreen = function () {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
     }
 });

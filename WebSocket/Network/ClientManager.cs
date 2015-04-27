@@ -136,6 +136,13 @@ namespace WebSocket.Network
                     drawPacket.X = (int)dict["X"];
                     drawPacket.Y = (int)dict["Y"];
                     drawPacket.Type = (string)dict["Type"];
+                    switch (drawPacket.Type.ToLower())
+                    {
+                        case "start":
+                            drawPacket.Color = (string)dict["Color"];
+                            drawPacket.LineWidth = (int)dict["LineWidth"];
+                            break;
+                    }
                     aux = new Packet("draw", drawPacket);
                     BroadCast(client, aux);
                     break;
