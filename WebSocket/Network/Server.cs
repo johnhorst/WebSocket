@@ -1,5 +1,7 @@
-﻿using System.Net;
+﻿using System;
+using System.Net;
 using System.Net.Sockets;
+using WebSocket.Logger;
 using WebSocket.MyThread;
 
 namespace WebSocket.Network
@@ -30,7 +32,10 @@ namespace WebSocket.Network
                     }
                     OnConnect(this, client);                    
                 }
-                catch { }
+                catch (Exception ex)
+                {
+                    DebugLogger.AddLog("Exception:" + ex);
+                }
             }
         }
 

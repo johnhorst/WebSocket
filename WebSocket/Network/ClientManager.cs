@@ -47,9 +47,7 @@ namespace WebSocket.Network
                         {
                             foreach (IClient c in addQueue)
                                 Clients.Add(c);
-                            addQueue.Clear();
-                            if (OnUserCountChange != null)
-                                OnUserCountChange(this, Clients.Count);
+                            addQueue.Clear();                            
                         }
                     }
 
@@ -59,16 +57,14 @@ namespace WebSocket.Network
                         {
                             foreach (IClient c in removeQueue)
                                 Clients.Remove(c);
-                            removeQueue.Clear();
-                            if (OnUserCountChange != null)
-                                OnUserCountChange(this, Clients.Count);
+                            removeQueue.Clear();                            
                             if (Clients.Count == 0)
                                 Stop();
                         }
                     }
 
                     foreach (IClient client in Clients)
-                        if (client.IsConnected && client.DataAvailable)
+                        if (client.DataAvailable)
                         {
                             while (client.DataAvailable)
                             {
@@ -77,11 +73,9 @@ namespace WebSocket.Network
                                 if (buffer == null || buffer.Length == 0)
                                     continue;
                                 Packet packet = JsonConvertor.FromJSON<Packet>(Encoding.UTF8.GetString(buffer));
-
                                 HandleRequest(client, packet);
                             }
                         }
-
                     Thread.Sleep(2);
                 }
                 catch (Exception ex)
@@ -108,6 +102,8 @@ namespace WebSocket.Network
                 }
                 client.CloseConnection += Client_CloseConnection;
                 client.TimeOutConnection += Client_TimeOutConnection;
+                if (OnUserCountChange != null)
+                    OnUserCountChange(this, Clients.Count);
                 if (IsRunning == false)
                     Start();
             }
@@ -120,6 +116,8 @@ namespace WebSocket.Network
                 lock (removeQueue)
                 {
                     removeQueue.Add(client);
+                    if (OnUserCountChange != null)
+                        OnUserCountChange(this, Clients.Count);
                 }
             }
         }

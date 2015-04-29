@@ -39,7 +39,10 @@ namespace WebSocket.Network
             {
                 base.Socket = value;
                 if (!UpgrateConnection())
-                    throw new WebSocketException();
+                {
+                    Socket.Close();
+                    throw new WebSocketException();                    
+                }                   
             }
         }
 

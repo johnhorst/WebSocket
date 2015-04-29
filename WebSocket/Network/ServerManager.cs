@@ -1,4 +1,5 @@
 ﻿using System.Net.Sockets;
+using WebSocket.Logger;
 
 namespace WebSocket.Network
 {
@@ -36,9 +37,9 @@ namespace WebSocket.Network
                 WebSocket c = new WebSocket(client);
                 ClientManager.AddClient(c); 
             }
-            catch(WebSocketException)
+            catch(WebSocketException ex)
             {
-                client.Close();
+                DebugLogger.AddLog("Exception:" + ex.Message);
             }           
         }
     }

@@ -4,7 +4,7 @@ namespace WebSocket.Network
 {
     public class WebSocketException : Exception
     {
-        public WebSocketException() : base("Failed to upgrate the socket.")
+        public WebSocketException() : base("Failed to upgrate the connection.")
         {
 
         }
