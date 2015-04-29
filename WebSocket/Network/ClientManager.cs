@@ -47,7 +47,7 @@ namespace WebSocket.Network
                         {
                             foreach (IClient c in addQueue)
                                 Clients.Add(c);
-                            addQueue.Clear();                            
+                            addQueue.Clear();
                         }
                     }
 
@@ -57,7 +57,7 @@ namespace WebSocket.Network
                         {
                             foreach (IClient c in removeQueue)
                                 Clients.Remove(c);
-                            removeQueue.Clear();                            
+                            removeQueue.Clear();
                             if (Clients.Count == 0)
                                 Stop();
                         }
@@ -141,8 +141,8 @@ namespace WebSocket.Network
                             break;
                         case "move":
                             drawPacket.X = (int)dict["X"];
-                            drawPacket.Y = (int)dict["Y"];                            
-                            break;                       
+                            drawPacket.Y = (int)dict["Y"];
+                            break;
                         case "clearscreen":
                             break;
                         default:
@@ -165,9 +165,18 @@ namespace WebSocket.Network
 
         private void BroadCast(IClient client, Packet packet)
         {
-            byte[] buffer = Encoding.UTF8.GetBytes(JsonConvertor.ToJSON(packet));
-            if (buffer == null || buffer.Length == 0)
+            byte[] buffer;
+            try
+            {
+                buffer = Encoding.UTF8.GetBytes(JsonConvertor.ToJSON(packet));
+                if (buffer == null || buffer.Length == 0)
+                    return;
+            }
+            catch (Exception ex)
+            {
+                DebugLogger.AddLog("Exception:" + ex);
                 return;
+            }
             foreach (IClient c in Clients)
                 if (c != client && c.IsConnected)
                     c.Write(buffer);
