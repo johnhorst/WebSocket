@@ -4,9 +4,9 @@ runtime: php
 api_version: 1
 
 skip_files:
-  - ^\.bin
-  - ^\.obj
-  - ^\Properties
+  - ^(.*/)?.*/bin/.*$
+  - ^(.*/)?.*/obj/.*$
+  - ^(.*/)?.*/Properties/.*$ 
   - ^(.*/)?.*\.csproj
   - ^(.*/)?.*\.csproj.user
   - ^(.*/)?.*\.config
