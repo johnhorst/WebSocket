@@ -8,6 +8,9 @@
 *.sln.docstates
 
 # Build results
+FrontEnd/Properties
+FrontEnd/*.config
+
 [Dd]ebug/
 [Dd]ebugPublic/
 [Rr]elease/
