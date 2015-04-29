@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Runtime.InteropServices;
-using System.Web.Script.Serialization;
 
 namespace WebSocket.Utility
 {
-    public class Utill
+    public static class Convertor
     {
         public static int SizeOf<T>() where T : struct
         {
@@ -34,15 +33,6 @@ namespace WebSocket.Utility
             Marshal.FreeHGlobal(ptr);
             return temp;
         }
-
-        public static string ToJSON(object obj)
-        {
-            return new JavaScriptSerializer().Serialize(obj);
-        }
-
-        public static T FromJSON<T>(string obj)
-        {
-            return new JavaScriptSerializer().Deserialize<T>(obj);
-        }
+      
     }
 }

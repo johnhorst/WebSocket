@@ -56,31 +56,33 @@ namespace WebSocket.Network
             byte[] header;
             base.Read(out header, 6);
 
-            OpCodeType opCode = (OpCodeType)(header[0] & 0x0F);          
+            OpCodeType opCode = (OpCodeType)(header[0] & 0x0F);
 
             int i = 2;
 
-            int dataSize = (header[1] & (~0x80));            
+            int dataSize = (header[1] & (~0x80));
             if (dataSize == 126)
             {
-                dataSize += BitConverter.ToInt16(header, i);              
+                dataSize += BitConverter.ToInt16(header, i);
                 i = 4;
                 Array.Resize(ref header, 10);
                 Read(ref header, 6, 2);
             }
             else if (dataSize == 127)
-            {                
-                i = 10;              
+            {
+                i = 10;
                 Array.Resize(ref header, 14);
                 Read(ref header, 6, 14);
                 dataSize += (int)BitConverter.ToInt64(header, 2);
             }
-           
+
             byte[] mask = new byte[4];
             Array.Copy(header, i, mask, 0, 4);
-           
+
             base.Read(out buffer, dataSize);
 
+            for (i = 0; i < buffer.Length; i++)
+                buffer[i] = (byte)(buffer[i] ^ mask[i % 4]);
             switch (opCode)
             {
                 case OpCodeType.CONTINUATION_FRAME:
@@ -91,25 +93,17 @@ namespace WebSocket.Network
                     break;
                 case OpCodeType.CONNECTION_CLOSE:
                     Close();
-                    buffer = null;
-                    return 0;
+                    break;
                 case OpCodeType.PING:
-                    Write(null, OpCodeType.PONG);
-                    return 0;
+                    DebugLogger.AddLog("Recive PING.");
+                    Write(buffer, OpCodeType.PONG);
+                    break;
                 case OpCodeType.PONG:
                     break;
                 default:
                     break;
             }
-
-            if (buffer!=null)
-            {
-                for (i = 0; i < buffer.Length; i++)
-                    buffer[i] = (byte)(buffer[i] ^ mask[i % 4]);
-                //DebugLogger.AddLog("Size:" +dataSize + "\nRecive:" + Encoding.UTF8.GetString(buffer));
-                return buffer.Length;
-            }
-            return 0;
+            return buffer.Length;
         }
 
         public override void Write(byte[] buffer)

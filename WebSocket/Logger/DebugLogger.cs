@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Text;
 
 namespace WebSocket.Logger
@@ -14,7 +15,12 @@ namespace WebSocket.Logger
         {
             if (OnMessage != null)
                 OnMessage(null, msg);
-           // sb.Append(msg + Environment.NewLine);
+            sb.Append(msg + Environment.NewLine);
+            if (sb.Length == int.MaxValue)
+            {
+                File.AppendAllText("logger.txt", sb.ToString());
+                sb.Clear();
+            }
         }
 
         public static string GetLog()

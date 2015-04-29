@@ -5,7 +5,7 @@ using System.Threading;
 using WebSocket.Logger;
 using WebSocket.MyThread;
 using WebSocket.Network.Packets;
-using WebSocket.Utility;
+using WebSocket.Json;
 
 namespace WebSocket.Network
 {
@@ -76,8 +76,7 @@ namespace WebSocket.Network
                                 client.Read(out buffer);
                                 if (buffer == null || buffer.Length == 0)
                                     continue;
-
-                                Packet packet = Utill.FromJSON<Packet>(Encoding.UTF8.GetString(buffer));
+                                Packet packet = JsonConvertor.FromJSON<Packet>(Encoding.UTF8.GetString(buffer));
 
                                 HandleRequest(client, packet);
                             }
@@ -133,14 +132,22 @@ namespace WebSocket.Network
             {
                 case "draw":
                     DrawPacket drawPacket = new DrawPacket();
-                    drawPacket.X = (int)dict["X"];
-                    drawPacket.Y = (int)dict["Y"];
                     drawPacket.Type = (string)dict["Type"];
                     switch (drawPacket.Type.ToLower())
                     {
                         case "start":
                             drawPacket.Color = (string)dict["Color"];
                             drawPacket.LineWidth = (int)dict["LineWidth"];
+                            drawPacket.X = (int)dict["X"];
+                            drawPacket.Y = (int)dict["Y"];
+                            break;
+                        case "move":
+                            drawPacket.X = (int)dict["X"];
+                            drawPacket.Y = (int)dict["Y"];                            
+                            break;                       
+                        case "clearscreen":
+                            break;
+                        default:
                             break;
                     }
                     aux = new Packet("draw", drawPacket);
@@ -160,13 +167,12 @@ namespace WebSocket.Network
 
         private void BroadCast(IClient client, Packet packet)
         {
+            byte[] buffer = Encoding.UTF8.GetBytes(JsonConvertor.ToJSON(packet));
+            if (buffer == null || buffer.Length == 0)
+                return;
             foreach (IClient c in Clients)
                 if (c != client && c.IsConnected)
-                {
-                    byte[] buffer = Encoding.UTF8.GetBytes(Utill.ToJSON(packet));
-                    if (buffer != null || buffer.Length > 0)
-                        c.Write(buffer);
-                }
+                    c.Write(buffer);
         }
 
         private void Client_TimeOutConnection(object sender, ClientEvent e)

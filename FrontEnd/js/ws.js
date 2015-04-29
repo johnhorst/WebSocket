@@ -1,51 +1,11 @@
-﻿$(document).ready(function () {
-
-    $('#changeColor').change(function () {
-        console.log($(this));
-        _canvas.color($(this).val());
-    });
-
-    console.log($('#changeColor'));
-
-    $('.sizePen').click(function () {
-        var newSize = parseInt($(this).children('b').text());
-        $('#currentSize').text(newSize)
-        _canvas.lineWidth(newSize);
-    });
-
-    $('#clearScreen').click(function () {
-        _canvas.clearScreen();
-    });
-
-    $('#user').click(function () {
-        var name = prompt('Please enter your name', user);
-        if (name != null && name.length > 0) {
-            user = name;
-        }
-    });
-
-    $('#connect').click(function () {
-        _ws.connect();
-    });
-
-    var _canvas = new Canvas('canvas');
-    var _ws = new WS("#imgstatus", "#connect");
-    var _chat = new Chat('#message', '#send', '#chatContainer');
-
-    _canvas.WSFunction(_ws.send);
-    _chat.WSFunction(_ws.send);
-
-    _ws.chatFunction(_chat.message);
-    _ws.drawFunction(_canvas.draw);
-    _ws.connect();
-
-
-
-    function WS(status, btn) {
+﻿function WS(status, btn) {
+        var _self = this;
         var connected = false;
         var _ws = undefined;
         var _chatFunction = undefined;
         var _drawFunction = undefined;
+        var _status = status || undefined;
+        var _btn = btn || undefined;
 
         window.onbeforeunload = function () {
             if (_ws !== undefined)
@@ -71,15 +31,19 @@
             _ws.onclose = function () {
                 connected = false;
                 console.log("Connection close.");
-                $(status).attr("src", 'img/offline.png');
-                $(btn).css('visibility', 'visible');
+                if (status)
+                    $(status).attr("src", 'img/offline.png');
+                if (btn)
+                    $(btn).css('visibility', 'visible');
             }
 
             _ws.onopen = function () {
                 console.log("Connected.");
                 connected = true;
-                $(status).attr("src", 'img/online.png');
-                $(btn).css('visibility', 'hidden');
+                if (status)
+                    $(status).attr("src", 'img/online.png');
+                if (btn)
+                    $(btn).css('visibility', 'hidden');
             }
 
             _ws.onerror = function (e) {
@@ -100,152 +64,5 @@
                 }
             }
         };
-    };
+};
 
-    function Chat(input, button, chatContainer) {
-
-        var inputElement = $(input);
-        var chatContainer = $(chatContainer);
-        var wsFunction = undefined;
-
-        $(button).click(function () {
-            send();
-        });
-
-        $(input).keyup(function (e) {
-            if (e.keyCode == 13) {
-                send();
-                e.preventDefault();
-            }
-        });
-
-
-        function send() {
-            var msg = inputElement.val();
-            inputElement.val("");
-            addMessage(user, msg);
-            wsFunction("chat", { User: user, Message: msg });
-        }
-
-        function addMessage(user, msg) {
-            var container = document.createElement("div");
-            var inp = document.createElement("div");
-            var lab = document.createElement("label");
-            var span = document.createElement("span");
-
-
-            $(lab).text(user + getTime() + ':');
-            $(span).text(msg);
-
-
-            $(container).addClass("form-inline");
-            $(inp).addClass("input-group");
-
-
-            $(inp).append(lab);
-            $(inp).append(span);
-            $(container).append(inp);
-            chatContainer.append(container);
-            chatContainer.scrollTop(chatContainer[0].scrollHeight);
-        }
-
-
-        var getTime = function () {
-            var date = new Date();
-
-            var hour = date.getHours();
-            hour = (hour < 10 ? '0' : '') + hour;
-            var min = date.getMinutes();
-            min = (min < 10 ? '0' : '') + min;
-
-            return '(' + hour + ':' + min + ')';
-        }
-
-        this.message = function (obj) {
-            if (obj.User === undefined || obj.Message === undefined)
-                return;
-            addMessage(obj.User, obj.Message);
-        }
-
-        this.WSFunction = function (e) {
-            wsFunction = e;
-        };
-    }
-
-    function Canvas(id) {
-
-        var canvas = document.getElementById(id);
-        var ctx = canvas.getContext("2d");
-        var drawing = false;
-        var wsFunction = undefined;
-        var color = '#000000';
-        var lineWidth = 5;
-
-        $(window).mousedown(function (e) {
-            ctx.lineWidth = lineWidth;
-            ctx.strokeStyle = color;
-            drawing = true;
-            var obj = getPosition(e);
-            obj.Type = "start";
-            obj.Color = color;
-            obj.LineWidth = lineWidth;
-            wsFunction("draw", obj);
-            draw(obj);
-        });
-
-        $(window).mouseup(function (e) {
-            drawing = false;
-        })
-
-        $(canvas).mousemove(function (e) {
-            if (drawing) {
-                var obj = getPosition(e);
-                obj.Type = "move";
-                wsFunction("draw", obj);
-                draw(obj);
-            }
-        });
-
-        var getPosition = function (e) {
-            if (e.offsetX === undefined || e.offsetY === undefined)
-                return { X: e.originalEvent.layerX, Y: e.originalEvent.layerY };
-            return { X: e.offsetX, Y: e.offsetY };
-        }
-
-        var draw = function (obj) {
-            switch (obj.Type.toLowerCase()) {
-                case "start":
-                    ctx.beginPath();
-                    ctx.moveTo(obj.X, obj.Y);
-                    ctx.strokeStyle = obj.Color;
-                    ctx.lineWidth = obj.LineWidth;
-                    break;
-                case "move":
-                    ctx.lineTo(obj.X, obj.Y);
-                    ctx.stroke();
-                    break;
-                default:
-                    break;
-            }
-        }
-
-        this.draw = function (obj) {
-            draw(obj);
-        }
-        this.WSFunction = function (e) {
-            wsFunction = e;
-        };
-
-        this.color = function (c) {
-            color = c;
-        }
-
-        this.lineWidth = function (size) {
-            lineWidth = size;
-        }
-
-        this.clearScreen = function () {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-        }
-    }
-});

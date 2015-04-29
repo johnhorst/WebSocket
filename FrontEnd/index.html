@@ -38,35 +38,30 @@
                     </div>
                 </div>
                 <div class="row">
+                    <div class="col-md-12">
+                        <div class="btn-group" role="group" aria-label="...">
+                            <button id="clearScreen" type="button" class="btn btn-default">Clear Screen</button>
+                            <div class="btn-group" role="group">
+                                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                                    Size:<b id="currentSize">5</b>
+                                    <span class="caret"></span>
+                                </button>
+                                <ul class="dropdown-menu" role="menu">
+                                    <li><a class="sizePen"><b>5</b></a></li>
+                                    <li><a class="sizePen"><b>10</b></a></li>
+                                    <li><a class="sizePen"><b>15</b></a></li>
+                                    <li><a class="sizePen"><b>20</b></a></li>
+                                </ul>
+                            </div>
+                            <input id="changeColor" type="color" value="#000000" placeholder="#[a-f0-9]{6}">
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
                     <div class="col-md-7">
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="btn-group" role="group" aria-label="...">
-                                    <button id="clearScreen" type="button" class="btn btn-default">Clear Screen</button>
-                                   <div class="btn-group" role="group">
-                                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                                            Size:<b id="currentSize">5</b>
-                                            <span class="caret"></span>
-                                        </button>
-                                        <ul class="dropdown-menu" role="menu">
-                                            <li><a class="sizePen"><b>5</b></a></li>
-                                            <li><a class="sizePen"><b>10</b></a></li>
-                                            <li><a class="sizePen"><b>15</b></a></li>
-                                            <li><a class="sizePen"><b>20</b></a></li>
-                                        </ul>
-                                    </div>
-                                    <input id="changeColor" type="color" value="#000000" placeholder="#[a-f0-9]{6}">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-12">
-                                <canvas id="canvas" height="400" width="600">
-                                    Your browser does not support html5 canvas.
-                                </canvas>
-                            </div>
-
-                        </div>
+                        <canvas id="canvas" height="400" width="600">
+                            Your browser does not support html5 canvas.
+                        </canvas>
                     </div>
                     <div class="col-md-5">
                         <div class="row">
@@ -89,10 +84,13 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div>    
     <script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
     <script src="js/config.js"></script>
     <script src="js/ws.js"></script>
+    <script src="js/chat.js"></script>
+    <script src="js/canvas.js"></script>
+    <script src="js/default.js"></script>
 </body>
 </html>

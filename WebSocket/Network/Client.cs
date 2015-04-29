@@ -98,7 +98,7 @@ namespace WebSocket.Network
 
         public void Write<T>(T obj) where T : struct
         {
-            byte[] buffer = Utill.ToBinary(obj);
+            byte[] buffer = Convertor.ToBinary(obj);
             Write(buffer);
         }
 
@@ -126,7 +126,7 @@ namespace WebSocket.Network
             {
                 DebugLogger.AddLog("Exception:" + ex.Message);
             }
-            buffer = null;
+            buffer = new byte[0];
             return 0;
         }
 
@@ -143,12 +143,12 @@ namespace WebSocket.Network
 
         public int Read<T>(out T obj) where T : struct
         {
-            int size = Utill.SizeOf<T>();
+            int size = Convertor.SizeOf<T>();
 
             byte[] buffer = null;
 
             Read(out buffer, size);
-            obj = Utill.FromBinary<T>(buffer);
+            obj = Convertor.FromBinary<T>(buffer);
             return size;
         }
 
