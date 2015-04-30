@@ -15,12 +15,12 @@ namespace WebSocket.Logger
         {
             if (OnMessage != null)
                 OnMessage(null, msg);
-            sb.Append(msg + Environment.NewLine);
-            if (sb.Length == int.MaxValue)
-            {
-                File.AppendAllText("logger.txt", sb.ToString());
-                sb.Clear();
-            }
+            sb.Append(msg + Environment.NewLine);                    
+        }
+
+        public static void SaveLog(string path)
+        {
+            File.AppendAllText(path, sb.ToString());
         }
 
         public static string GetLog()

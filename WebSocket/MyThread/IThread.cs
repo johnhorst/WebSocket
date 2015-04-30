@@ -6,6 +6,7 @@
         bool IsRunning { get; }
 
         void Stop();
+        void Stop(bool forceStop);
         void Start();
     }
 }

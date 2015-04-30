@@ -23,16 +23,18 @@ namespace WebSocket.Network
         public override void Stop()
         {
             base.Stop();
-
-            foreach (IClient client in Clients)
+            if (Clients.Count > 0)
             {
-                client.CloseConnection -= null;
-                client.TimeOutConnection -= null;
-                client.Close();
+                foreach (IClient client in Clients)
+                {
+                    client.CloseConnection -= null;
+                    client.TimeOutConnection -= null;
+                    client.Close();
+                }
+                Clients.Clear();
+                if (OnUserCountChange != null)
+                    OnUserCountChange(this, 0);
             }
-            Clients.Clear();
-            if (OnUserCountChange != null)
-                OnUserCountChange(this, 0);
         }
 
         public override void Run()
@@ -48,6 +50,8 @@ namespace WebSocket.Network
                             foreach (IClient c in addQueue)
                                 Clients.Add(c);
                             addQueue.Clear();
+                            if (OnUserCountChange != null)
+                                OnUserCountChange(this, Clients.Count);
                         }
                     }
 
@@ -58,8 +62,10 @@ namespace WebSocket.Network
                             foreach (IClient c in removeQueue)
                                 Clients.Remove(c);
                             removeQueue.Clear();
+                            if (OnUserCountChange != null)
+                                OnUserCountChange(this, Clients.Count);
                             if (Clients.Count == 0)
-                                Stop();
+                                SleepMode();
                         }
                     }
 
@@ -76,7 +82,8 @@ namespace WebSocket.Network
                                 HandleRequest(client, packet);
                             }
                         }
-                    Thread.Sleep(2);
+                    if (Clients.Count < 250)
+                        Thread.Sleep(2);
                 }
                 catch (Exception ex)
                 {
@@ -102,9 +109,7 @@ namespace WebSocket.Network
                 }
                 client.CloseConnection += Client_CloseConnection;
                 client.TimeOutConnection += Client_TimeOutConnection;
-                if (OnUserCountChange != null)
-                    OnUserCountChange(this, Clients.Count);
-                if (IsRunning == false)
+                if (IsSleepMode == true)
                     Start();
             }
         }
@@ -116,8 +121,6 @@ namespace WebSocket.Network
                 lock (removeQueue)
                 {
                     removeQueue.Add(client);
-                    if (OnUserCountChange != null)
-                        OnUserCountChange(this, Clients.Count);
                 }
             }
         }

@@ -47,6 +47,8 @@ namespace WebSocket.Network
         }
 
 
+        public bool ValidHandshake { get; private set; }
+
         public override void Close()
         {
             if (IsConnected)
@@ -175,9 +177,10 @@ namespace WebSocket.Network
                      )) + Environment.NewLine + Environment.NewLine);
 
                 base.Write(response);
+                ValidHandshake = true;
                 return true;
             }
-
+            ValidHandshake = false;
             return false;
         }
     }

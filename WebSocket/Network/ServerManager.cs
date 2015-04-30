@@ -19,9 +19,8 @@ namespace WebSocket.Network
         public ClientManager ClientManager { get { return cm; } }
 
         public void Start()
-        {
-            Server.Start();
-            ClientManager.Start();
+        {            
+            Server.Start();                 
         }
 
         public void Stop()

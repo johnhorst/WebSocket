@@ -8,7 +8,6 @@
 *.sln.docstates
 
 # Build results
-FrontEnd/Properties
 FrontEnd/*.config
 
 [Dd]ebug/
