@@ -49,11 +49,14 @@ namespace WebSocket.MyThread
         [SecurityPermission(SecurityAction.Demand, ControlThread = true)]
         public virtual void Stop(bool forceStop)
         {
-            if (IsSleepMode)
-                are.Set();
-            IsRunning = false;
-            if (!thread.Join(3000) && forceStop)
-                thread.Abort();
+            if(IsRunning)
+            {
+                if (IsSleepMode)
+                    are.Set();
+                IsRunning = false;
+                if (!thread.Join(3000) && forceStop)
+                    thread.Abort();
+            }            
         }
     }
 }

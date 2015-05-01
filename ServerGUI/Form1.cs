@@ -25,7 +25,11 @@ namespace ServerGUI
                 richTextBox1.Select(richTextBox1.Text.Length - 1, 0);
                 richTextBox1.ScrollToCaret();
             });
-            BeginInvoke(invoker);
+            try
+            {
+                BeginInvoke(invoker);
+            }
+            catch { }
         }
 
         private void DebugLogger_OnMessage(object sender, string msg)
@@ -57,7 +61,11 @@ namespace ServerGUI
             {
                 label1.Text = "User Online:" + userOnline;
             });
-            BeginInvoke(invoker);
+            try
+            {
+                BeginInvoke(invoker);
+            }
+            catch { }
         }
 
         private void ClientManager_OnUserCountChange(object sender, int userOnline)
