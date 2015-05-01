@@ -21,7 +21,7 @@ namespace ServerService
             if (args.Length == 2)
                 sm = new ServerManager(args[0], int.Parse(args[1]));
             else
-                sm = new ServerManager("127.0.0.1", 2024);
+                sm = new ServerManager("0.0.0.0", 2024);
             sm.Start();
             sm.ClientManager.OnUserCountChange += ClientManager_OnUserCountChange;
         }
@@ -35,6 +35,7 @@ namespace ServerService
         {
 
             sm.Stop();
+            Thread.Sleep(3000);
             DebugLogger.SaveLog("logger.txt");
         }
     }

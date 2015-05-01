@@ -69,7 +69,13 @@ namespace WebSocket.Network
                         }
                     }
 
+
                     foreach (IClient client in Clients)
+                    {
+                        if (client.IsConnected == false)
+                        {
+                            client.Close();
+                        }
                         if (client.DataAvailable)
                         {
                             while (client.DataAvailable)
@@ -82,6 +88,8 @@ namespace WebSocket.Network
                                 HandleRequest(client, packet);
                             }
                         }
+                    }
+                       
                     if (Clients.Count < 250)
                         Thread.Sleep(2);
                 }
@@ -110,6 +118,8 @@ namespace WebSocket.Network
                 client.CloseConnection += Client_CloseConnection;
                 client.TimeOutConnection += Client_TimeOutConnection;
                 if (IsSleepMode == true)
+                    WakeUp();
+                if (IsRunning == false)
                     Start();
             }
         }
@@ -187,11 +197,13 @@ namespace WebSocket.Network
 
         private void Client_TimeOutConnection(object sender, ClientEvent e)
         {
+            DebugLogger.AddLog("TimeOut:" + sender.ToString());
             RemoveClient((IClient)sender);
         }
 
         private void Client_CloseConnection(object sender, ClientEvent e)
         {
+            DebugLogger.AddLog("CloseConnection:" + sender.ToString());
             RemoveClient((IClient)sender);
         }
     }

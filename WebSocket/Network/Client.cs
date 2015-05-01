@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using WebSocket.Logger;
@@ -168,6 +169,14 @@ namespace WebSocket.Network
             int readed = Read(out buff, size);
             Array.Copy(buff, 0, buffer, offset, readed);
             return readed;
+        }
+
+        public override string ToString()
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.Append("IP=" + ((IPEndPoint)socket.Client.RemoteEndPoint).Address.ToString() +
+                " Port=" + ((IPEndPoint)socket.Client.RemoteEndPoint).Port);
+            return sb.ToString();
         }
     }
 }

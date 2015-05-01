@@ -26,6 +26,6 @@ namespace WebSocket.Network
 
         int Read(out byte[] buffer);
         int Read(out string buffer);
-        int Read<T>(out T obj) where T : struct;
+        int Read<T>(out T obj) where T : struct;        
     }
 }
