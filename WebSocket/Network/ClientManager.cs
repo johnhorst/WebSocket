@@ -75,6 +75,7 @@ namespace WebSocket.Network
                         if (client.IsConnected == false)
                         {
                             client.Close();
+                            Clients.Remove(client);
                         }
                         if (client.DataAvailable)
                         {
