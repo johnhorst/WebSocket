@@ -42,11 +42,9 @@ namespace ServerGUI
             var handle = GetConsoleWindow();
             if (show)
             {
-                if (handle == IntPtr.Zero)
-                {
-                    AllocConsole();
-                    return;
-                }
+                if (handle == IntPtr.Zero)                
+                    AllocConsole();                 
+                
                 ShowWindow(handle, SW_SHOW);
             }
 
