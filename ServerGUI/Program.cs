@@ -32,6 +32,7 @@ namespace ServerGUI
             if (args.Length == 0)
             {
                 StartGUI();
+                return;
             }
             ParseArgs(args);
         }

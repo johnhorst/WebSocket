@@ -1,2 +1,2 @@
-﻿var SERVER_IP = "ws://127.0.0.1:2024"
+﻿var SERVER_IP = "ws://191.233.95.221:2024"
 var user = "anonymous";
